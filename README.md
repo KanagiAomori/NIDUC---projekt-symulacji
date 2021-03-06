@@ -1,3 +1,4 @@
 Projekt NIDUC
 Bartosz Sulima
-Milosz 
+Milosz
+Philip

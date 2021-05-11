@@ -91,5 +91,37 @@ symDays = 20
 restaurant = Restaurant(typeRestaurant, 8, 18)
 restaurant.addEmployees(chefNum, waiterNum, managerNum, chefSalary, waiterSalary, managerSalary)
 
+
+# reading simulation configuration parameters from file
+class FileHandler:
+    buffer = [];
+    start_config = [];
+
+    def read_config(self):
+        self.start_config = open('config.txt', 'r')
+        self.buffer = self.start_config.read()
+
+    def print_config(self):
+        print(self.buffer)
+
+    def write_result(self, result):
+        result_file = open('result.txt', 'w')  # w or a
+        for line in result:
+            result_file.write(line)
+
+    # def print_result(self):
+
+
+# main func
+def main():
+    # test file
+    fh = FileHandler()
+    fh.read_config()
+    fh.print_config()
+
+
+if __name__ == "__main__":
+    main()
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 

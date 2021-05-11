@@ -1,0 +1,10 @@
+typeRestaurant:stacjonarna
+chefNum:5
+chefSalary:4200
+waiterNum:6
+waiterSalary:2000
+managerNum:1
+managerSalary:2000
+tableNum:20
+carNum:0
+symDays:20

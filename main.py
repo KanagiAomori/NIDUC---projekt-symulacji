@@ -5,7 +5,6 @@ class Employee:
         self.type = type
 
     state = False
-    state2 =False
 
     def makeBusy(self, employeeName, restaurant):
         if employeeName == "chef":

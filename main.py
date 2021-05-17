@@ -1,4 +1,7 @@
 # --------------------------------------------------------------------------------------------------------------------
+from random import randint
+
+
 class Employee:
     def __init__(self, type, salary):
         self.salary = salary
@@ -59,13 +62,36 @@ class Restaurant:
             employe = Employee("manager", managerSalary)
             self.managerList.append(employe)
 
+    def addTables(self, twoPerson, fourPerson, sixPerson, eightperson):
+        for i in range(twoPerson):
+            table = Table(2)
+            self.allTablesList.append(table)
+            self.unservTablesList.append(table)
+
+        for i in range(fourPerson):
+            table = Table(2)
+            self.allTablesList.append(table)
+            self.unservTablesList.append(table)
+
+        for i in range(sixPerson):
+            table = Table(2)
+            self.allTablesList.append(table)
+            self.unservTablesList.append(table)
+
+        for i in range(eightperson):
+            table = Table(2)
+            self.allTablesList.append(table)
+            self.unservTablesList.append(table)
+
 
 class Table:
     def __init__(self, chairs):
         self.chairs = chairs
 
     status = False
-    guestList = []
+    groupofGuest
+    # guestList = []
+
 
 
 class Client:
@@ -78,18 +104,18 @@ class Client:
 
 
 # Symulacja:
-typeRestaurant = "stacjonarna"
-chefNum = 5
-chefSalary = 2000
-waiterNum = 6
-waiterSalary = 2000
-managerNum = 1
-managerSalary = 2000
-tableNum = 20
-carNum = 0
-symDays = 20
-restaurant = Restaurant(typeRestaurant, 8, 18)
-restaurant.addEmployees(chefNum, waiterNum, managerNum, chefSalary, waiterSalary, managerSalary)
+# typeRestaurant = "stacjonarna"
+# chefNum = 5
+# chefSalary = 2000
+# waiterNum = 6
+# waiterSalary = 2000
+# managerNum = 1
+# managerSalary = 2000
+# tableNum = 20
+# carNum = 0
+# symDays = 20
+# restaurant = Restaurant(typeRestaurant, 8, 18)
+# restaurant.addEmployees(chefNum, waiterNum, managerNum, chefSalary, waiterSalary, managerSalary)
 
 
 # reading simulation configuration parameters from file
@@ -114,10 +140,24 @@ class FileHandler:
 
 # main func
 def main():
+    # print("a")
     # test file
-    fh = FileHandler()
-    fh.read_config()
-    fh.print_config()
+    # fh = FileHandler()
+    # fh.read_config()
+    # fh.print_config()
+    typeRestaurant = "stacjonarna"
+    chefNum = 5
+    chefSalary = 2000
+    waiterNum = 6
+    waiterSalary = 2000
+    managerNum = 1
+    managerSalary = 2000
+    restaurant = Restaurant(typeRestaurant, 8, 18)
+    restaurant.addEmployees(chefNum, waiterNum, managerNum, chefSalary, waiterSalary, managerSalary)
+
+# for i in range(100):
+#     x=randint(1, 10)
+#     print(x)
 
 
 if __name__ == "__main__":

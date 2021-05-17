@@ -62,6 +62,8 @@ class Restaurant:
             employe = Employee("manager", managerSalary)
             self.managerList.append(employe)
 
+
+    # tworzenie stołow
     def addTables(self, twoPerson, fourPerson, sixPerson, eightperson):
         tableID=0
         for i in range(twoPerson):
@@ -95,6 +97,21 @@ class Table:
         self.tableID=id
 
     status = False
+    guestList = []
+    # dodatkowe funkcje
+    def isOpen(self):
+        isopen=True
+        if self.status !=0:
+            isopen=False
+        return isopen
+
+    def emptyTable(self):
+        self.guestList.clear()
+        self.status=0
+
+    def fillTable(self, guests):
+        self.guestList=guests
+        self.status=1
 
 
 

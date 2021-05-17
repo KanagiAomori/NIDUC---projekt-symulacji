@@ -63,34 +63,39 @@ class Restaurant:
             self.managerList.append(employe)
 
     def addTables(self, twoPerson, fourPerson, sixPerson, eightperson):
+        tableID=0
         for i in range(twoPerson):
-            table = Table(2)
+            table = Table(2, tableID)
             self.allTablesList.append(table)
             self.unservTablesList.append(table)
+            tableID=tableID+1
 
         for i in range(fourPerson):
-            table = Table(2)
+            table = Table(4, tableID)
             self.allTablesList.append(table)
             self.unservTablesList.append(table)
+            tableID = tableID + 1
 
         for i in range(sixPerson):
-            table = Table(2)
+            table = Table(6, tableID)
             self.allTablesList.append(table)
             self.unservTablesList.append(table)
+            tableID = tableID + 1
 
         for i in range(eightperson):
-            table = Table(2)
+            table = Table(8, tableID)
             self.allTablesList.append(table)
             self.unservTablesList.append(table)
+            tableID = tableID + 1
 
 
 class Table:
-    def __init__(self, chairs):
+    def __init__(self, chairs, id):
         self.chairs = chairs
+        self.tableID=id
 
     status = False
-    groupofGuest
-    # guestList = []
+
 
 
 

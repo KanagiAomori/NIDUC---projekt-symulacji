@@ -252,7 +252,7 @@ def main():
     table6 = 2
     table8 = 2
     avgGuestperHour = 12
-    restaurant = Restaurant(typeRestaurant, 8, 18)
+    restaurant = Restaurant(typeRestaurant, 2, 22)
     restaurant.addEmployees(chefNum, waiterNum, managerNum, chefSalary, waiterSalary, managerSalary)
     restaurant.addTables(table2, table4, table6, table8)
     restaurant.addGuests(avgGuestperHour)
@@ -361,6 +361,7 @@ def main():
                                     restaurant.revenue += order.cena  # tymczasowo
                                     restaurant.orderlist.remove(order)  # usunięcie zamówienia z listy zamówień
                                     break
+        print("kelnerzy po obsłudze zamówień:"+str(kelnerzy))
 
         # jedzenie
         for table in restaurant.filledTablesList:
@@ -438,22 +439,26 @@ def main():
             czygosciewsrodku = True
 
         print("ilosć zamówień: " + str(len(restaurant.orderlist)))
-        # for table in restaurant.filledTablesList:
-        #     print("id stołu: " + str(table.tableID))
-        #     print("status stołu: " + str(table.status))
+        print("12121")
+        for table in restaurant.filledTablesList:
 
+            print("id stołu: " + str(table.tableID))
+            print("status stołu: " + str(table.status))
+        print("222222")
+        if czasdzialania> czaszamkniecia+60:
+            break
     # później można nadgodziny wziąć
     chefcost = chefNum * chefSalary * restaurant.workHours() + menagers * managerSalary * restaurant.workHours()
     menagercost = managerNum * managerSalary * restaurant.workHours()
     waitercost = waiterNum * waiterSalary * restaurant.workHours()
-    # print("koszt kelnerów: " + str(waitercost))
-    # print("koszt kucharzy: " + str(chefcost))
-    # print("koszt menagerów: " + str(menagercost))
-    # allcost = chefcost + menagercost + waitercost
-    # print("wszstkie koszty: " + str(allcost))
-    # print("dochód: " + str(restaurant.revenue))
-    # adjusted_revenue = restaurant.revenue - allcost
-    # print("dochód po kosztach: " + str(adjusted_revenue))
+    print("koszt kelnerów: " + str(waitercost))
+    print("koszt kucharzy: " + str(chefcost))
+    print("koszt menagerów: " + str(menagercost))
+    allcost = chefcost + menagercost + waitercost
+    print("wszstkie koszty: " + str(allcost))
+    print("dochód: " + str(restaurant.revenue))
+    adjusted_revenue = restaurant.revenue - allcost
+    print("dochód po kosztach: " + str(adjusted_revenue))
 
 
 if __name__ == "__main__":

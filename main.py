@@ -104,14 +104,14 @@ class Restaurant:
             numberofguests = numberofguests - x
 
     def guestInside(self):
-        guestinside = False
+        guestinside = 0
         print(len(self.waitlineguestList))
         for table in self.filledTablesList:
             if table.status == True:
-                guestinside = True
+                guestinside = 1
 
         if len(self.waitlineguestList) > 0:
-            guestinside = True
+            guestinside = 1
         return guestinside
 
     def countWorkers(self, type):
@@ -279,10 +279,12 @@ def main():
     #
     #
 
-    while czasdzialania <= czaszamkniecia or restaurant.guestInside():  # działa w czasie pracy i jak są klienci
-        print(czasdzialania <= czaszamkniecia)
-        print(restaurant.guestInside())
-        print(czasdzialania <= czaszamkniecia or restaurant.guestInside())
+    while czasdzialania <= czaszamkniecia or restaurant.guestInside()!=0:  # działa w czasie pracy i jak są klienci
+        print("@@@@@@@@@@@@@@@@@@@@@@@@")
+        print((czasdzialania <= czaszamkniecia))
+        print((restaurant.guestInside()))
+        print((czasdzialania <= czaszamkniecia or restaurant.guestInside()!=0))
+        print("$$$$$$$$$$$$$$$$$$$$$$$$")
         chef = chefNum
         kelnerzy = waiterNum
         menagers = managerNum
@@ -300,9 +302,18 @@ def main():
 
         # dostępni menagerzy
         # (na razie zakładam że menagerzy zawsze dostępni czyli czas obsługi =1 minuta)
+
+
+        if czasdzialania==czaszamkniecia:
+            restaurant.waitlineguestList.clear()
+
+
+
+
+
+
         dlugkolejki = len(restaurant.waitlineguestList)
         print("czas działania" + str(czasdzialania))
-        print("czazamknięcia" + str(czaszamkniecia))
         print("Długość kolejki: " + str(dlugkolejki))
         if dlugkolejki > 0 and menagers > 0:
 

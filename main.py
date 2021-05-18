@@ -50,6 +50,8 @@ class Restaurant:
     allguestList = []
     waitlineguestList = []
 
+    orderlist-[]
+
     def workHours(self):
         return self.closeHour - self.openHour
 
@@ -93,6 +95,7 @@ class Restaurant:
             self.unservTablesList.append(table)
             tableID = tableID + 1
 
+    # dodawanie klientów
     def addGuests(self, average):
         time = self.workHours()
         zakres = (time * 60) - 30  # do 30 min przed zamknięciem wpuszczamy klientów
@@ -118,8 +121,17 @@ class Restaurant:
             groupofpeople = Groupofpeople(x, arrival, minpat)
             groupofpeople.listofPeople = grupa
             self.allguestList.append(groupofpeople)
-            groupID=groupID+1
+            groupID = groupID + 1
             numberofguests = numberofguests - x
+
+    def guestInside(self):
+        guestinside = False
+        for table in self.allTablesList:
+            if table.status == True:
+                guestinside = True
+        if len(self.waitlineguestList) > 0:
+            guestinside = True
+        return guestinside
 
 
 class Table:
@@ -139,11 +151,11 @@ class Table:
 
     def emptyTable(self):
         self.guestList.clear()
-        self.status = 0
+        self.status = False
 
     def fillTable(self, guests):
         self.guestList = guests
-        self.status = 1
+        self.status = True
 
 
 class Client:
@@ -179,6 +191,24 @@ class Groupofpeople:
 
     def incTimewaited(self):
         self.timewaited = self.timewaited + 1
+
+class Order:
+    def __init__(self, klientId, tableId, rodzaj, czas, cena):
+        self.klientID=klientId
+        self.tableID=tableId
+        self.rodzaj=rodzaj
+        self.czas=czas
+        self.cena=cena
+
+    def isReady(self):
+        isready=True
+        if self.czas>0:
+            isready=False
+        return isready
+
+    def decTime(self):
+        self.czas=self.czas-1
+
 
 
 # Symulacja:
@@ -218,11 +248,13 @@ class FileHandler:
 
 # main func
 def main():
-    # print("a")
+    #
     # test file
     # fh = FileHandler()
     # fh.read_config()
     # fh.print_config()
+
+    # zmienne na razie w funkcji
     typeRestaurant = "stacjonarna"
     chefNum = 5
     chefSalary = 2000
@@ -240,13 +272,36 @@ def main():
     restaurant.addTables(table2, table4, table6, table8)
     restaurant.addGuests(avgGuestperHour)
 
+    # to tylko do kontroli czy klientów poprawnie dodaje
+    # for groupofpeople in restaurant.allguestList:
+    #     print("Liczba gosci" + str(groupofpeople.numberofGuests))
+    #
+    #     for client in groupofpeople.listofPeople:
+    #         print("id klienta:" + str(client.clientID) + " id grupy" + str(client.groupID))
 
-    #to tylko do kontroli
-    for groupofpeople in restaurant.allguestList:
-        print("Liczba gosci" + str(groupofpeople.numberofGuests))
+    czasdzialania = 0
+    czaszamkniecia = restaurant.workHours() * 60  # pentla będzie co minutę
 
-        for client in groupofpeople.listofPeople:
-            print("id klienta:"+ str(client.clientID)+" id grupy"+str(client.groupID))
+
+#główna pętla
+    while czasdzialania <= czaszamkniecia or restaurant.guestInside():
+
+
+        for groupofpeople in restaurant.allguestList:#sprawdzamy czy czas przyjścia grupy nadszedł
+            if groupofpeople.arrival==czasdzialania:
+                restaurant.waitlineguestList.append(groupofpeople)
+                restaurant.allguestList.remove(groupofpeople)
+
+
+
+
+
+
+
+
+
+
+        czasdzialania=czasdzialania+1
 
 
 

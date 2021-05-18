@@ -141,7 +141,7 @@ class Table:
         self.tableID = id
 
     status = False
-    przyjętezamowienie=False
+    przyjętezamowienie = False
     guestList = []
 
     # dodatkowe funkcje
@@ -295,10 +295,10 @@ def main():
                 restaurant.waitlineguestList.append(groupofpeople)
                 restaurant.allguestList.remove(groupofpeople)
 
-        menagers = len(restaurant.managerList)  #dostępni menagerzy
+        menagers = len(restaurant.managerList)  # dostępni menagerzy
         # (na razie zakładam że menagerzy zawsze dostępni czyli czas obsługi =1 minuta)
         dlugkolejki = len(restaurant.waitlineguestList)
-        if dlugkolejki>0 and menagers>0:
+        if dlugkolejki > 0 and menagers > 0:
 
             for table in restaurant.unservTablesList:
 
@@ -318,35 +318,41 @@ def main():
                             restaurant.unservTablesList.remove(table)
                             break
 
-        for groupofpeople in restaurant.waitlineguestList:#jeśli dalej stoją w kolejce
-            groupofpeople.incTimewaited()#zwiększamy czas jaki stoją
-            if groupofpeople.resignorNot():#sprawdzamy czy są dalej cierpliwi
-                restaurant.waitlineguestList.remove(groupofpeople) #jeśli nie są to wywalamy ich z kolejki
-
-        kelnerzy=len(restaurant.waiterList)
-        if kelnerzy>0:
+        for groupofpeople in restaurant.waitlineguestList:  # jeśli dalej stoją w kolejce
+            groupofpeople.incTimewaited()  # zwiększamy czas jaki stoją
+            if groupofpeople.resignorNot():  # sprawdzamy czy są dalej cierpliwi
+                restaurant.waitlineguestList.remove(groupofpeople)  # jeśli nie są to wywalamy ich z kolejki
+        # zamówienia
+        kelnerzy = len(restaurant.waiterList)  # zakładam że wszyscy dostępni na razie
+        if kelnerzy > 0:
             for table in restaurant.filledTablesList:
-                if kelnerzy>0:
+                if kelnerzy > 0:
                     if table.przyjętezamowienie == False:  # jeśli stolik złożył zamówienia
-                        kelnerzy=kelnerzy-1
+                        kelnerzy = kelnerzy - 1
                         for client in table.guestList:
-                            danie=randint(1,2) #1to zupa 2- drugie danie
-                            czas=0
-                            cena=0
-                            if danie==1:
-                                czas=2 #2 min dla zupy
-                                cena=5
-                            elif danie==2:
-                                czas=3 #3min
-                                cena=10
-                            order=Order(client.clientID,table.tableID,danie,czas,cena)
+                            danie = randint(1, 2)  # 1to zupa 2- drugie danie
+                            czas = 0
+                            cena = 0
+                            if danie == 1:
+                                czas = 2  # 2 min dla zupy
+                                cena = 5
+                            elif danie == 2:
+                                czas = 3  # 3min
+                                cena = 10
+                            order = Order(client.clientID, table.tableID, danie, czas, cena)
                             restaurant.orderlist.append(order)
+        # gotowanie
+        zamówienia = len(restaurant.orderlist)
+        chef = len(restaurant.chefList)
+        if zamówienia > 0:
+            for order in restaurant.orderlist:
+                if chef>0:
+                    if not order.isReady():#jeśli zamówienie nie jest skończone i jest dostępny szef to zmniejszamy jego czas o minutę
+                        chef=chef-1
+                        order.decTime()
 
 
-
-
-
-
+        #dostarczanie
 
 
     czasdzialania = czasdzialania + 1

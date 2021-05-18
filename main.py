@@ -27,9 +27,11 @@ class Restaurant:
     revenue = 0
 
     def workHours(self):
+        if self.closeHour < self.openHour:
+            return abs((24 - self.openHour + self.closeHour)) % 24
         if (self.closeHour == self.openHour):
             return 24
-        return abs((24 - self.openHour + self.closeHour)) % 24
+        return self.closeHour - self.openHour
 
     def addEmployees(self, chefNum, waiterNum, managerNum, chefSalary, waiterSalary, managerSalary):
         for i in range(chefNum):
@@ -157,9 +159,7 @@ class Table:
 
 
 class Client:
-    # def __init__(self, patience, orderType):
-    #     self.orderType = orderType
-    #     self.patience = patience
+
 
     def __init__(self, patience, clientID, groupID):
         self.patience = patience
@@ -278,13 +278,17 @@ def main():
     #
     #
     #
+    czyotwarte = True
+    czygosciewsrodku = True
 
-    while czasdzialania <= czaszamkniecia or restaurant.guestInside()!=0:  # działa w czasie pracy i jak są klienci
-        print("@@@@@@@@@@@@@@@@@@@@@@@@")
-        print((czasdzialania <= czaszamkniecia))
-        print((restaurant.guestInside()))
-        print((czasdzialania <= czaszamkniecia or restaurant.guestInside()!=0))
-        print("$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(str(restaurant.workHours()))
+
+    while czyotwarte or czygosciewsrodku:  # działa w czasie pracy i jak są klienci
+        # print("@@@@@@@@@@@@@@@@@@@@@@@@")
+        # print((czasdzialania <= czaszamkniecia))
+        # print((restaurant.guestInside()))
+        # print((czasdzialania <= czaszamkniecia or restaurant.guestInside()!=0))
+        # print("$$$$$$$$$$$$$$$$$$$$$$$$")
         chef = chefNum
         kelnerzy = waiterNum
         menagers = managerNum
@@ -303,14 +307,8 @@ def main():
         # dostępni menagerzy
         # (na razie zakładam że menagerzy zawsze dostępni czyli czas obsługi =1 minuta)
 
-
-        if czasdzialania==czaszamkniecia:
+        if czasdzialania == czaszamkniecia:
             restaurant.waitlineguestList.clear()
-
-
-
-
-
 
         dlugkolejki = len(restaurant.waitlineguestList)
         print("czas działania" + str(czasdzialania))
@@ -333,8 +331,8 @@ def main():
                             restaurant.waitlineguestList.remove(groupofpeople)
                             restaurant.filledTablesList.append(table)
                             restaurant.unservTablesList.remove(table)
-                            print("Stol: " + str(table.tableID) + "zajety")
-                            print("Stol: " + str(table.chairs))
+                            # print("Stol: " + str(table.tableID) + "zajety")
+                            # print("Stol: " + str(table.chairs))
 
                             break
 
@@ -343,7 +341,6 @@ def main():
         for groupofpeople in restaurant.waitlineguestList:  # jeśli dalej stoją w kolejce
             groupofpeople.timewaited += 1  # zwiększamy czas jaki stoją
             if groupofpeople.resignorNot():  # sprawdzamy czy są dalej cierpliwi
-
                 restaurant.waitlineguestList.remove(groupofpeople)  # jeśli nie są to wywalamy ich z kolejki
 
         # dostarczanie zamówień
@@ -406,6 +403,7 @@ def main():
             for table in restaurant.filledTablesList:
                 if kelnerzy > 0:
                     if table.orderTaken == False:  # jeśli stolik nie złożył zamówienia
+                        table.orderTaken=True
                         kelnerzy = kelnerzy - 1
                         for client in table.guestList:
                             danie = randint(1, 2)  # 1to zupa 2- drugie danie
@@ -430,6 +428,16 @@ def main():
                         order.czas -= 1
 
         czasdzialania += 1
+        if czasdzialania == czaszamkniecia:
+            czyotwarte = False
+
+        # print("^^^"+str(restaurant.guestInside())+"^^^")
+        if restaurant.guestInside() == 0:
+            czygosciewsrodku = False
+        elif restaurant.guestInside() != 0:
+            czygosciewsrodku = True
+
+        print("ilosć zamówień: " + str(len(restaurant.orderlist)))
         # for table in restaurant.filledTablesList:
         #     print("id stołu: " + str(table.tableID))
         #     print("status stołu: " + str(table.status))
@@ -438,14 +446,14 @@ def main():
     chefcost = chefNum * chefSalary * restaurant.workHours() + menagers * managerSalary * restaurant.workHours()
     menagercost = managerNum * managerSalary * restaurant.workHours()
     waitercost = waiterNum * waiterSalary * restaurant.workHours()
-    print("koszt kelnerów: " + str(waitercost))
-    print("koszt kucharzy: " + str(chefcost))
-    print("koszt menagerów: " + str(menagercost))
-    allcost = chefcost + menagercost + waitercost
-    print("wszstkie koszty: " + str(allcost))
-    print("dochód: " + str(restaurant.revenue))
-    adjusted_revenue = restaurant.revenue - allcost
-    print("dochód po kosztach: " + str(adjusted_revenue))
+    # print("koszt kelnerów: " + str(waitercost))
+    # print("koszt kucharzy: " + str(chefcost))
+    # print("koszt menagerów: " + str(menagercost))
+    # allcost = chefcost + menagercost + waitercost
+    # print("wszstkie koszty: " + str(allcost))
+    # print("dochód: " + str(restaurant.revenue))
+    # adjusted_revenue = restaurant.revenue - allcost
+    # print("dochód po kosztach: " + str(adjusted_revenue))
 
 
 if __name__ == "__main__":

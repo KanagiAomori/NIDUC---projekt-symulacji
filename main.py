@@ -64,7 +64,7 @@ class Restaurant:
     # dodawanie klientów na początku tworzymy listę osób co pajawią się w ciągu dnia a potem się będziemy bawić
     # w umieszczenie w kolejce
     def addGuests(self, average):
-
+        generated_guests = 0
         time = self.workHours()
         zakres = (time * 60) - 30  # do 30 min przed zamknięciem wpuszczamy klientów
         guestID = 0
@@ -72,16 +72,15 @@ class Restaurant:
         godzinadzialania = 0
         # w ostatniej linijce jest warunek kończący pętlę
 
-        while godzinadzialania < time:
-            print("godz dział:" + str(godzinadzialania))
-            y = average+ randint(-(average//3),average//3)
-            if godzinadzialania >= self.rHrstart and godzinadzialania<self.rHrend:
-                y = y + (average // 2)
+        while godzinadzialania < time:  # dla każdej godziny działania losujemy grupy
+            # tutaj w sumie się nie bawiłem w rozkłady normalne bo powinni być w miare równomiernie rozłożeni w godzinie
+            y = average + randint(-(average // 3), average // 3)  # taka formułka na szybko pomyślana
+            if godzinadzialania >= self.rHrstart and godzinadzialania < self.rHrend:
+                y = y + (average // 2)  # jeśli godz szczytu to dorzucamy 50proc średniej
 
-
-            print("klienci:"+str(y))
             while y > 0:
                 x = randint(1, 8)
+                generated_guests += x
                 grupa = []
                 minpat = 99999
                 for i in range(x):
@@ -94,18 +93,18 @@ class Restaurant:
                     grupa.append(client)
                     guestID = guestID + 1
                 arrival = 0
-                if godzinadzialania < (time - 1):
+                if godzinadzialania < (time - 1):  # dla wszystkich godzin przed ostatnią mogą być w całej godzinie
                     arrival = randint((60 * godzinadzialania),
                                       (60 * ((godzinadzialania) + 1)))  # czas przybycia przed ostatnią godz
-                elif godzinadzialania == (time - 1):
+                elif godzinadzialania == (time - 1):  # dla ostatniej godziny mogą być tylko przez pierwsze 30min
                     arrival = randint((60 * godzinadzialania), ((60 * ((godzinadzialania) + 1)) - 30))
-                print("czas przybycia: " + str(arrival))
                 groupofpeople = Groupofpeople(x, arrival, minpat)
                 groupofpeople.listofPeople = grupa
                 self.allguestList.append(groupofpeople)
                 groupID = groupID + 1
                 y = y - x
             godzinadzialania += 1
+        print("Wygenerowani klienci: " + str(generated_guests))
 
     def guestInside(self):
         guestinside = 0
@@ -384,15 +383,15 @@ def main():
     chefcost = chefNum * chefSalary * restaurant.workHours() + menagers * managerSalary * restaurant.workHours()
     menagercost = managerNum * managerSalary * restaurant.workHours()
     waitercost = waiterNum * waiterSalary * restaurant.workHours()
-
-    print("koszt kelnerów: " + str(waitercost))
-    print("koszt kucharzy: " + str(chefcost))
-    print("koszt menagerów: " + str(menagercost))
+    print(" ")
+    print("Koszt kelnerów: " + str(waitercost))
+    print("Koszt kucharzy: " + str(chefcost))
+    print("Koszt menagerów: " + str(menagercost))
     allcost = chefcost + menagercost + waitercost
-    print("wszstkie koszty: " + str(allcost))
-    print("dochód: " + str(restaurant.revenue))
+    print("Wszstkie koszty: " + str(allcost))
+    print("Dochód: " + str(restaurant.revenue))
     adjusted_revenue = restaurant.revenue - allcost
-    print("dochód po kosztach: " + str(adjusted_revenue))
+    print("Dochód po kosztach: " + str(adjusted_revenue))
 
 
 if __name__ == "__main__":

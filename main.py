@@ -1,5 +1,8 @@
 import random
+import math
 from random import randint
+from numpy import random
+
 
 class Restaurant:
     def __init__(self, type, openHour, closeHour, rushHourstart, rushHourEnd):
@@ -74,18 +77,23 @@ class Restaurant:
 
         while godzinadzialania < time:  # dla każdej godziny działania losujemy grupy
             # tutaj w sumie się nie bawiłem w rozkłady normalne bo powinni być w miare równomiernie rozłożeni w godzinie
-            y = average + randint(-(average // 3), average // 3)  # taka formułka na szybko pomyślana
+            y = random.logistic(loc = average, scale = 0.2*average, size = 1) # rozkład losowy ale skalujący się opisujący wzrost
             if godzinadzialania >= self.rHrstart and godzinadzialania < self.rHrend:
                 y = y + (average // 2)  # jeśli godz szczytu to dorzucamy 50proc średniej
 
             while y > 0:
-                x = randint(1, 8)
+                x = 10
+                while(x > 8 or x < 1):
+                    x = round(random.uniform(1, 8)) # rozład losowy w którym każde zdarzenie ma równe prawdopodobieństwo
                 generated_guests += x
                 grupa = []
                 minpat = 99999
                 for i in range(x):
+                    patience = 15 + random.normal(loc = 0, scale = 5, size = 1)
+                    if(patience < 1):
+                        patience = 1
 
-                    patience = 15 + randint(-10, 10)
+                    # print("patience: " + str(patience))
                     # minpat najmniejsza cierpliwość w danej grupie ludzi
                     if patience < minpat:  # cierpliwość grupy
                         minpat = patience
@@ -172,7 +180,7 @@ class Groupofpeople:
                 client.restaurantMark = (1 + procent) * client.restaurantMark
             elif procent > 0.5 and random.randint(0, 1) == 1:
                 client.restaurantMark = (1 - procent) * client.restaurantMark
-                print(client.restaurantMark)
+                print("mark: " + client.restaurantMark)
 
 
 
@@ -328,7 +336,9 @@ def main():
                                 # dostarczenie zamówienia klientowi:
                                 if client.clientID == order.klientID:
                                     client.clientStatus = 1
-                                    timeofeating = randint(3, 10)
+                                    timeofeating = math.ceil(random.normal(loc = 10, scale = 4,size = 1))
+                                    if(timeofeating < 3):
+                                        timeofeating = 3
                                     client.clientEatTime = timeofeating
                                     restaurant.revenue += order.cena  # tymczasowo
                                     restaurant.orderlist.remove(order)  # usunięcie zamówienia z listy zamówień
@@ -389,7 +399,8 @@ def main():
     # później można nadgodziny wziąć
     chefcost = chefNum * chefSalary * restaurant.workHours() + menagers * managerSalary * restaurant.workHours()
     menagercost = managerNum * managerSalary * restaurant.workHours()
-    waitercost = waiterNum * waiterSalary * restaurant.workHours()
+    waitercost = waiterNum * waiterSalary * restaurant.wor
+    kHours()
     print(" ")
     print("Oceny : " + str(len(restaurant.markList)))
     for i in restaurant.markList[:]:

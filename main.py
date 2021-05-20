@@ -1,3 +1,4 @@
+import random
 from random import randint
 
 class Restaurant:
@@ -20,8 +21,12 @@ class Restaurant:
     revenue = 0
 
     def markRestaurant(self,  group):
-        for client in group.listofPeople:
+        for client in group.listofPeople[:]:
+            for markedClient in self.markList[:]:
+                if markedClient.clientID == client.clientID:
+                    self.markList.remove(markedClient)
             self.markList.append(client)
+
 
     def workHours(self):
         if self.closeHour < self.openHour:
@@ -88,12 +93,12 @@ class Restaurant:
                     grupa.append(client)
                     guestID = guestID + 1
                 arrival = 0
-                if godzinadzialania < (time - 2):  # dla wszystkich godzin przed ostatnią mogą być w całej godzinie
+                if godzinadzialania <= (time - 1):  # dla wszystkich godzin przed ostatnią mogą być w całej godzinie
                     arrival = randint((60 * godzinadzialania),
                                       (60 * ((godzinadzialania) + 1)))  # czas przybycia przed ostatnią godz
                 elif godzinadzialania == (time - 1):  # dla ostatniej godziny mogą być tylko przez pierwsze 30min
                     arrival = randint((60 * godzinadzialania), ((60 * ((godzinadzialania) + 1)) - 30))
-                groupofpeople = Groupofpeople(x, arrival, minpat)
+                groupofpeople = Groupofpeople(x, arrival, minpat, groupID)
                 groupofpeople.listofPeople = grupa
                 self.allguestList.append(groupofpeople)
                 groupID = groupID + 1
@@ -103,7 +108,7 @@ class Restaurant:
 
     def guestInside(self):
         guestinside = False
-        for table in self.filledTablesList:
+        for table in self.filledTablesList[:]:
             if table.status == True:
                 guestinside = True
         if len(self.waitlineguestList) > 0:
@@ -131,7 +136,7 @@ class Table:
 
     def finishedEating(self):
         finished = True
-        for client in self.guestList:
+        for client in self.guestList[:]:
             if client.clientStatus != 2:
                 finished = False
         return finished
@@ -151,21 +156,22 @@ class Client:
 
 # szybciej będzie jak się ich zgrupuje
 class Groupofpeople:
-    def __init__(self, number, arrivaltime, minpatience):
+    def __init__(self, number, arrivaltime, minpatience, id):
         self.numberofGuests = number
         self.arrival = arrivaltime
         self.minimalPatience = minpatience
+        self.id = id
 
     listofPeople = []
     timewaited = 0
 
     def timeMarkCalc(self):
-        for client in self.listofPeople:
+        for client in self.listofPeople[:]:
             procent = self.timewaited / client.patience
-            if procent <= 0.5:
+            if procent <= 0.3 and random.randint(0, 1) == 1:
                 client.restaurantMark = (1 + procent) * client.restaurantMark
-            else:
-                client.restaurantMark = (procent) * client.restaurantMark
+            elif procent > 0.5 and random.randint(0, 1) == 1:
+                client.restaurantMark = (1 - procent) * client.restaurantMark
                 print(client.restaurantMark)
 
 
@@ -207,7 +213,7 @@ class FileHandler:
 
     def write_result(self, result):
         result_file = open('result.txt', 'w')  # w or a
-        for line in result:
+        for line in result[:]:
             result_file.write(line)
 
 
@@ -250,9 +256,13 @@ def main():
     #
     #
     czyotwarte = True
-    czygosciewsrodku = True
 
     print("Czas działania: " + str(restaurant.workHours()) + " Godzin")
+    a = 0
+    for grou in restaurant.allguestList[:]:
+        a += len(grou.listofPeople)
+        print(str(grou.arrival) + " przyb " + str(grou.id))
+    print(a)
 
     while czyotwarte or restaurant.guestInside():  # działa w czasie pracy i jak są klienci
 
@@ -260,13 +270,12 @@ def main():
         kelnerzy = waiterNum
         menagers = managerNum
 
-        for groupofpeople in restaurant.allguestList:
+        for groupofpeople in restaurant.allguestList[:]:
             # sprawdzamy czy czas przyjścia grupy nadszedł
             # jśli tak to przerzucamy ich do kolejki
             if groupofpeople.arrival == czasdzialania:
                 restaurant.waitlineguestList.append(groupofpeople)
                 restaurant.allguestList.remove(groupofpeople)
-
         # dostępni menagerzy
         # (na razie zakładam że menagerzy zawsze dostępni czyli czas obsługi =1 minuta)
 
@@ -276,28 +285,30 @@ def main():
         dlugkolejki = len(restaurant.waitlineguestList)
         if dlugkolejki > 0 and menagers > 0:
 
-            for table in restaurant.unservTablesList:
+            for table in restaurant.unservTablesList[:]:
 
-                for groupofpeople in restaurant.waitlineguestList:
+                for groupofpeople in restaurant.waitlineguestList[:]:
 
                     if menagers > 0:
 
                         if table.chairs >= groupofpeople.numberofGuests:
                             # jeśli trafimy na wolny stół co ma tyle samo lub więcej krzeseł niż trzeba)
                             menagers = menagers - 1  # menager zajęty na turę
-                            dlugkolejki = dlugkolejki - 1  # zmniejszamy długość kolejki
+                           # dlugkolejki = dlugkolejki - 1  # zmniejszamy długość kolejki
                             # porządki w listach
                             table.status = True
                             table.guestList = groupofpeople.listofPeople
                             restaurant.waitlineguestList.remove(groupofpeople)
                             restaurant.filledTablesList.append(table)
+                            groupofpeople.timeMarkCalc()
+                            restaurant.markRestaurant(groupofpeople)
                             restaurant.unservTablesList.remove(table)
 
                             break
 
         # rezygnowanie z kolejki
 
-        for groupofpeople in restaurant.waitlineguestList:  # jeśli dalej stoją w kolejce
+        for groupofpeople in restaurant.waitlineguestList[:]:  # jeśli dalej stoją w kolejce
             groupofpeople.timewaited += 1  # zwiększamy czas jaki stoją
             groupofpeople.timeMarkCalc()
             restaurant.markRestaurant(groupofpeople)
@@ -308,12 +319,12 @@ def main():
         zamowienia = len(restaurant.orderlist)
 
         if zamowienia > 0:
-            for order in restaurant.orderlist:
+            for order in restaurant.orderlist[:]:
                 if kelnerzy > 0 and order.isReady():
                     kelnerzy -= 1
-                    for table in restaurant.filledTablesList:
+                    for table in restaurant.filledTablesList[:]:
                         if table.tableID == order.tableID:
-                            for client in table.guestList:
+                            for client in table.guestList[:]:
                                 # dostarczenie zamówienia klientowi:
                                 if client.clientID == order.klientID:
                                     client.clientStatus = 1
@@ -324,15 +335,15 @@ def main():
                                     break
 
         # jedzenie
-        for table in restaurant.filledTablesList:
-            for client in table.guestList:
+        for table in restaurant.filledTablesList[:]:
+            for client in table.guestList[:]:
                 if client.clientStatus == 1:
                     client.clientEatTime -= 1
                     if client.clientEatTime <= 0:
                         client.clientStatus = 2
 
         # koniec jedzenia i wyjście klientów
-        for table in restaurant.filledTablesList:
+        for table in restaurant.filledTablesList[:]:
             if table.finishedEating():
                 table.emptyTable()
                 restaurant.unservTablesList.append(table)
@@ -341,12 +352,12 @@ def main():
         # zamówienia
 
         if kelnerzy > 0:
-            for table in restaurant.filledTablesList:
+            for table in restaurant.filledTablesList[:]:
                 if kelnerzy > 0:
                     if table.orderTaken == False:  # jeśli stolik nie złożył zamówienia
                         table.orderTaken = True
                         kelnerzy = kelnerzy - 1
-                        for client in table.guestList:
+                        for client in table.guestList[:]:
                             danie = randint(1, 2)  # 1to zupa 2- drugie danie
                             czas = 0
                             cena = 0
@@ -364,11 +375,12 @@ def main():
         zamowienia = len(restaurant.orderlist)
 
         if zamowienia > 0:
-            for order in restaurant.orderlist:
+            for order in restaurant.orderlist[:]:
                 if chef > 0:
                     if not order.isReady():  # jeśli zamówienie nie jest skończone i jest dostępny szef to zmniejszamy jego czas o minutę
                         chef = chef - 1
                         order.czas -= 1
+        print(czasdzialania)
 
         czasdzialania += 1
         if czasdzialania == czaszamkniecia:
@@ -380,8 +392,8 @@ def main():
     waitercost = waiterNum * waiterSalary * restaurant.workHours()
     print(" ")
     print("Oceny : " + str(len(restaurant.markList)))
-    for i in restaurant.markList:
-        print(i.restaurantMark)
+    for i in restaurant.markList[:]:
+        print(str(i.restaurantMark) + " id: " + str(i.clientID))
     print("Koszt kelnerów: " + str(waitercost))
     print("Koszt kucharzy: " + str(chefcost))
     print("Koszt menagerów: " + str(menagercost))
@@ -390,6 +402,12 @@ def main():
     print("Dochód: " + str(restaurant.revenue))
     adjusted_revenue = restaurant.revenue - allcost
     print("Dochód po kosztach: " + str(adjusted_revenue))
+    print(restaurant.allguestList)
+    a = 0
+    for grou in restaurant.allguestList[:]:
+        a += len(grou.listofPeople)
+        print(str(grou.arrival) + " przyb " + str(grou.id))
+    print(a)
 
 
 if __name__ == "__main__":

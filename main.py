@@ -1,7 +1,7 @@
 import random
 import math
 from random import randint
-
+from numpy import random
 
 class Employee:
     def __init__(self, type):
@@ -386,8 +386,8 @@ def main():
         #obsługa klientów zamawiającycj  na wynos
         if dlugkolejki > 0 and managers.isGroupFree():
             for groupofpeople in restaurant.waitlineguestList[:]:
-                if waiters.isGroupFree() and groupofpeople.ordertype == "nawynos":
-                    for client in groupofpeople:
+                if groupofpeople.ordertype == "nawynos":
+                    for client in groupofpeople.listofPeople:
                         if cook.isGroupFree():
                             #kompleksowe zamówienia
                             ile_dan = randint(1, 3)  # klient może zamówić od 1 do 3 dań
@@ -409,8 +409,10 @@ def main():
                                 while czas != 0:
                                     cook.groupWork(2)
                                     czas = czas - 1
-                                groupofpeople.timeMarkCalc()
-                                restaurant.waitlineguestList.remove(groupofpeople)
+                                ile_dan = ile_dan - 1
+                            groupofpeople.timeMarkCalc()
+                            restaurant.waitlineguestList.remove(groupofpeople)
+
 
 
 
@@ -430,9 +432,10 @@ def main():
         if zamowienia > 0:
             for order in restaurant.orderlist[:]:
                 #wypadek przy podawaniu jedzenia
-                wypadek = randint(0, 100)
-                if wypadek <= 20:
+                wypadek = randint(0, 1000)
+                if wypadek <= 2:
                     order.cena = 0
+                    print("wypadek")
                     break
                 else:
                     if waiters.isGroupFree() and order.isReady(): #kelnerzy > 0
@@ -495,9 +498,10 @@ def main():
                                     czas = randint(1, 2) # 1 min dla deseru
                                     cena = 3
 
-                                    order = Order(client.clientID, table.tableID, danie, czas, cena)
+                                order = Order(client.clientID, table.tableID, danie, czas, cena)
 
-                                    restaurant.orderlist.append(order)
+                                restaurant.orderlist.append(order)
+                                ile_dan = ile_dan - 1
         # gotowanie
         zamowienia = len(restaurant.orderlist)
         if zamowienia > 0:

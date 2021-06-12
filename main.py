@@ -563,6 +563,7 @@ def main():
                         order.czas -= 1
 
         czasdzialania += 1
+        
         if czasdzialania == czaszamkniecia:
             czyotwarte = False
 
@@ -590,4 +591,4 @@ def main():
     print("Srednia ocena restauracji: " + str(avgMark))
 
 if __name__ == "__main__":
-    main()
+    main() 

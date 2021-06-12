@@ -46,7 +46,6 @@ class EmployeeGroup:
             if employee.workTime == 0:
                 employee.isBusy = False
 
-
 class Restaurant:
     def __init__(self, type, openHour, closeHour, rushHourstart, rushHourEnd):
         self.type = type
@@ -60,7 +59,7 @@ class Restaurant:
 
     allguestList = []  # goście którzy jeszcze nie dotarli
     waitlineguestList = []  # goście którzy są w kolejce
-
+    waitlinetakeawayList = [] # goście którzy są w kolejce i zamawiaja na wynos
     markList = []
 
     orderlist = []
@@ -326,6 +325,7 @@ def main():
     #
     #
     czyotwarte = True
+    ilewypadkow = randint(6, 12)
 
     print("Czas działania: " + str(restaurant.workHours()) + " Godzin")
 
@@ -342,7 +342,10 @@ def main():
             # sprawdzamy czy czas przyjścia grupy nadszedł
             # jśli tak to przerzucamy ich do kolejki
             if groupofpeople.arrival == czasdzialania:
-                restaurant.waitlineguestList.append(groupofpeople)
+                if groupofpeople.ordertype == "nawynos":
+                    restaurant.waitlinetakeawayList.append(groupofpeople)
+                else:
+                    restaurant.waitlineguestList.append(groupofpeople)
                 restaurant.allguestList.remove(groupofpeople)
         # dostępni menagerzy
         # (na razie zakładam że menagerzy zawsze dostępni czyli czas obsługi =1 minuta)
@@ -374,22 +377,29 @@ def main():
                             restaurant.unservTablesList.remove(table)
 
                             break
-        #czas przerwy dla pracowników
-        przerwa = randint(1, 30)
-        if przerwa < 10:
-            cook.makeBreak(20)
-        elif przerwa > 10 and przerwa < 20:
-            waiters.makeBreak(20)
-        else:
-            managers.makeBreak(20)
 
-        #obsługa klientów zamawiającycj  na wynos
-        if dlugkolejki > 0 and managers.isGroupFree():
-            for groupofpeople in restaurant.waitlineguestList[:]:
+
+        #czas przerwy dla pracowników
+
+        czyprzerwa = randint(0, 50)
+        if czyprzerwa < 5:
+            przerwa = randint(1, 30)
+            if przerwa < 10:
+                cook.makeBreak(15)
+            elif przerwa > 10 and przerwa < 20:
+                waiters.makeBreak(15)
+            else:
+                managers.makeBreak(15)
+
+        # obsługa klientów zamawiającycj  na wynos
+        dlugkolejkinawynos = len(restaurant.waitlinetakeawayList)
+        if dlugkolejkinawynos > 0 and managers.isGroupFree():
+            for groupofpeople in restaurant.waitlinetakeawayList[:]:
                 if groupofpeople.ordertype == "nawynos":
-                    for client in groupofpeople.listofPeople:
-                        if cook.isGroupFree():
-                            #kompleksowe zamówienia
+                    if cook.isGroupFree():
+                        for client in groupofpeople.listofPeople:
+
+                            # kompleksowe zamówienia
                             ile_dan = randint(1, 3)  # klient może zamówić od 1 do 3 dań
                             while ile_dan:
                                 danie = randint(1, 3)  # 1 to zupa 2 to drugie danie 3 to deser
@@ -410,9 +420,9 @@ def main():
                                     cook.groupWork(2)
                                     czas = czas - 1
                                 ile_dan = ile_dan - 1
-                            groupofpeople.timeMarkCalc()
-                            restaurant.waitlineguestList.remove(groupofpeople)
-
+                        restaurant.waitlinetakeawayList.remove(groupofpeople)
+                        groupofpeople.timeMarkCalc()
+                        restaurant.markRestaurant(groupofpeople)
 
 
 
@@ -426,16 +436,20 @@ def main():
                 restaurant.markRestaurant(groupofpeople)
                 print(str(groupofpeople.id) + " opuscili -----------------------------------------------------------------------------------")
 
+
+
         # dostarczanie zamówień
         zamowienia = len(restaurant.orderlist)
 
         if zamowienia > 0:
+
             for order in restaurant.orderlist[:]:
                 #wypadek przy podawaniu jedzenia
-                wypadek = randint(0, 1000)
-                if wypadek <= 2:
+                wypadek = randint(0, 100)
+                if ilewypadkow != 0 and wypadek <= 5:
                     order.cena = 0
                     print("wypadek")
+                    ilewypadkow -= 1
                     break
                 else:
                     if waiters.isGroupFree() and order.isReady(): #kelnerzy > 0

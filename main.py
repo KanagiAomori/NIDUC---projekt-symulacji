@@ -149,7 +149,7 @@ class Restaurant:
                 elif godzinadzialania == (time - 1):  # dla ostatniej godziny mogą być tylko przez pierwsze 30min
                     arrival = randint((60 * godzinadzialania), ((60 * ((godzinadzialania) + 1)) - 30))
                 #rodzaj zamówienia dla grupy
-                losujzamowienie = randint(1,5)
+                losujzamowienie = randint(1, 50)
                 rodzajzamowienia = "stacjonarnie"
                 if losujzamowienie <= 2:
                     rodzajzamowienia = "nawynos"
@@ -283,25 +283,66 @@ class FileHandler:
 
 # main func
 def main():
-    # zmienne na razie w funkcji
-    global menagers
-    typeRestaurant = "stacjonarna"
-    chefNum = 5
-    chefSalary = 15
-    waiterNum = 6
-    waiterSalary = 15
-    managerNum = 1
-    managerSalary = 15
-    table2 = 4
-    table4 = 4
-    table6 = 2
-    table8 = 2
-    avgGuestperHour = 30
-    # i tak jeszcze btw sigdzie nie używamy faktu że zaczynamy o godz x i kończymy o godz y
-    # więc może po prostu zróbmy z tego jedną zmienną czas działania czy coś
+    print("jeśli chcesz wczytać dane z pliku wybierz 0")
+    print("jeśli chcesz wczytać dane domyślne wybierz 1")
+    a = int(input())
+    if a == 1:
+        # zmienne na razie w funkcji
+        global menagers
+        typeRestaurant = "stacjonarna"
+        chefNum = 5
+        chefSalary = 15
+        waiterNum = 6
+        waiterSalary = 15
+        managerNum = 1
+        managerSalary = 15
+        table2 = 4
+        table4 = 4
+        table6 = 2
+        table8 = 2
+        avgGuestperHour = 30
+        # i tak jeszcze btw sigdzie nie używamy faktu że zaczynamy o godz x i kończymy o godz y
+        # więc może po prostu zróbmy z tego jedną zmienną czas działania czy coś
+        restaurant = Restaurant(typeRestaurant, 8, 18, 4, 6)  # rush hour start i end to nie godziny zegarowe
+        # tylko godziny działania restauracji np jak zaczynamy o 8 i rushhourstart jest 4 to chodzi o to że się
+        # zaczya o 12
+    else:
+        global menagers
+        typeRestaurant = "stacjonarna"
+        rozmiar = 0
+        fopen = open("dane.txt",'r')
+        for line in fopen:
+            line = line.strip()
+            if rozmiar == 0:
+                chefNum = int(line)
+            elif rozmiar == 1:
+                chefSalary = int(line)
+            elif rozmiar == 2:
+                waiterNum = int(line)
+            elif rozmiar == 3:
+                waiterSalary = int(line)
+            elif rozmiar == 4:
+                managerNum = int(line)
+            elif rozmiar == 5:
+                managerSalary = int(line)
+            elif rozmiar == 6:
+                table2 = int(line)
+            elif rozmiar == 7:
+                table4 = int(line)
+            elif rozmiar == 8:
+                table6 = int(line)
+            elif rozmiar == 9:
+                table8 = int(line)
+            elif rozmiar == 10:
+                avgGuestperHour = int(line)
+            rozmiar = rozmiar + 1
+        fopen.close()
+        # zmienne na razie w funkcji
+        # i tak jeszcze btw sigdzie nie używamy faktu że zaczynamy o godz x i kończymy o godz y
+        # więc może po prostu zróbmy z tego jedną zmienną czas działania czy coś
     restaurant = Restaurant(typeRestaurant, 8, 18, 4, 6)  # rush hour start i end to nie godziny zegarowe
-    # tylko godziny działania restauracji np jak zaczynamy o 8 i rushhourstart jest 4 to chodzi o to że się
-    # zaczya o 12
+        # tylko godziny działania restauracji np jak zaczynamy o 8 i rushhourstart jest 4 to chodzi o to że się
+        # zaczya o 12
 
     restaurant.addTables(table2, table4, table6, table8)
     restaurant.addGuests(avgGuestperHour)
@@ -380,7 +421,6 @@ def main():
 
 
         #czas przerwy dla pracowników
-
         czyprzerwa = randint(0, 50)
         if czyprzerwa < 5:
             przerwa = randint(1, 30)
@@ -391,19 +431,17 @@ def main():
             else:
                 managers.makeBreak(15)
 
-        # obsługa klientów zamawiającycj  na wynos
+        # obsługa klientów zamawiających na wynos
         dlugkolejkinawynos = len(restaurant.waitlinetakeawayList)
         if dlugkolejkinawynos > 0 and managers.isGroupFree():
             for groupofpeople in restaurant.waitlinetakeawayList[:]:
                 if groupofpeople.ordertype == "nawynos":
-                    if cook.isGroupFree():
-                        for client in groupofpeople.listofPeople:
-
-                            # kompleksowe zamówienia
-                            ile_dan = randint(1, 3)  # klient może zamówić od 1 do 3 dań
-                            while ile_dan:
-                                danie = randint(1, 3)  # 1 to zupa 2 to drugie danie 3 to deser
-
+                    for client in groupofpeople.listofPeople:
+                        # kompleksowe zamówienia
+                        ile_dan = randint(1, 3)  # klient może zamówić od 1 do 3 dań
+                        while ile_dan:
+                            danie = randint(1, 3)  # 1 to zupa 2 to drugie danie 3 to deser
+                            if cook.isGroupFree():
                                 czas = 0
                                 cena = 0
                                 if danie == 1:
@@ -416,9 +454,7 @@ def main():
                                     czas = randint(1, 2)  # 1 min dla deseru
                                     cena = 3
                                 restaurant.revenue += cena
-                                while czas != 0:
-                                    cook.groupWork(2)
-                                    czas = czas - 1
+                                cook.groupWork(czas)
                                 ile_dan = ile_dan - 1
                         restaurant.waitlinetakeawayList.remove(groupofpeople)
                         groupofpeople.timeMarkCalc()
@@ -449,7 +485,7 @@ def main():
                 if ilewypadkow != 0 and wypadek <= 5:
                     order.cena = 0
                     print("wypadek")
-                    ilewypadkow -= 1
+                    ilewypadkow = ilewypadkow - 1
                     break
                 else:
                     if waiters.isGroupFree() and order.isReady(): #kelnerzy > 0

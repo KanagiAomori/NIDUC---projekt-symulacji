@@ -290,7 +290,7 @@ def main():
     #
     days = int(input("Podaj ilosc dni\n"))
     avgMark = 0
-    oceny = 0
+
     profil = int(input("Wybierz profil: 0 - FastFood, 1 - Zwyczajna restauracja, 2 - Restauracja droga\n"))
     global expectedPrice
     if profil == 0:
@@ -309,7 +309,10 @@ def main():
     for p in range(dishmax):
         criticalPrice += restaurant.dishMap[p + 1]
 
+
     for i in range(days):
+        if chefNum <= 0 or waiterNum <= 0 or managerNum <= 0:
+            break
         restaurant.markList.clear()
         restaurant.unservTablesList.clear()
         restaurant.filledTablesList.clear()
@@ -340,8 +343,6 @@ def main():
                         klient.restaurantMark = klient.restaurantMark * 0.7
                     else:
                         klient.restaurantMark = klient.restaurantMark * 1.3
-                        if klient.restaurantMark > 10:
-                            klient.restaurantMark = 10
                     if criticalPrice > 2 * expectedPrice * dishmax:
                         klient.restaurantMark = klient.restaurantMark * 0.8
                     elif criticalPrice > expectedPrice * dishmax:
@@ -350,6 +351,8 @@ def main():
                         klient.restaurantMark = klient.restaurantMark * 1.2
                     elif criticalPrice < expectedPrice * dishmax:
                         klient.restaurantMark = klient.restaurantMark * 1.1
+                    if klient.restaurantMark > 10:
+                        klient.restaurantMark = 10
 
 
 
@@ -382,6 +385,8 @@ def main():
                         klientWyn.restaurantMark = klientWyn.restaurantMark * 1.2
                     elif criticalPrice < expectedPrice * dishmax:
                         klientWyn.restaurantMark = klientWyn.restaurantMark * 1.1
+                    if klientWyn.restaurantMark > 10:
+                        klientWyn.restaurantMark = 10
                 if groupofpeopleW.resignorNot():  # sprawdzamy czy są dalej cierpliwi
                     restaurant.takeawayList.remove(groupofpeopleW)  # jeśli nie są to wywalamy ich z kolejki
 
@@ -501,7 +506,6 @@ def main():
         for client in restaurant.markList:
              avgMark += client.restaurantMark
         avgMark = avgMark / len(restaurant.markList)
-        oceny = oceny + len(restaurant.markList)
 
     # później można nadgodziny wziąć
     # chefcost = chefNum * chefSalary * restaurant.workHours() + menagers * managerSalary * restaurant.workHours()
@@ -510,7 +514,6 @@ def main():
     waitercost = waiterNum * waiterSalary * restaurant.worktime*days
     print(" ")
     print("Czas pracy: " + str(restaurant.worktime) + " Godzin")
-    print("Wygenerowani klienci : " + str(oceny))
     # for i in restaurant.markList[:]:
     #     print(str(i.restaurantMark) + " id: " + str(i.clientID))
     print("Koszt kelnerów: " + str(waitercost))

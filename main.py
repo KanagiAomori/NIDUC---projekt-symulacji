@@ -253,17 +253,44 @@ def main():
     # zmienne na razie w funkcji
     global menagers
     chefNum = int(input("Podaj liczbe kucharzy\n"))
+    while chefNum <= 0:
+        print("Niepoprawne dane!\n")
+        chefNum = int(input("Podaj liczbe kucharzy\n"))
     chefSalary = int(input("Podaj pensje\n"))
     waiterNum = int(input("Podaj liczbe kelnerow\n"))
+    while waiterNum <= 0:
+        print("Niepoprawne dane!\n")
+        waiterNum = int(input("Podaj liczbe kelnerow\n"))
     waiterSalary = int(input("Podaj pensje\n"))
     managerNum = int(input("Podaj liczbe managerow\n"))
+    while managerNum <= 0:
+        print("Niepoprawne dane!\n")
+        managerNum = int(input("Podaj liczbe managerow\n"))
     managerSalary = int(input("Podaj pensje\n"))
     table2 = int(input("Podaj liczbe stolow 2-osobowych\n"))
+    while table2 <= 0:
+        print("Niepoprawne dane!\n")
+        table2 = int(input("Podaj liczbe stolow 2-osobowych\n"))
     table4 = int(input("Podaj liczbe stolow 4-osobowych\n"))
+    while table4 <= 0:
+        print("Niepoprawne dane!\n")
+        table4 = int(input("Podaj liczbe stolow 4-osobowych\n"))
     table6 = int(input("Podaj liczbe stolow 6-osobowych\n"))
+    while table6 <= 0:
+        print("Niepoprawne dane!\n")
+        table6 = int(input("Podaj liczbe stolow 6-osobowych\n"))
     table8 = int(input("Podaj liczbe stolow 8-osobowych\n"))
+    while table8 <= 0:
+        print("Niepoprawne dane!\n")
+        table8 = int(input("Podaj liczbe stolow 8-osobowych\n"))
     avgGuestperHour = int(input("Srednia liczba gosci w restauracji\n"))
-    workTime = int(input("Podaj czas pracy restauracji\n"))
+    while avgGuestperHour <= 0:
+        print("Niepoprawne dane!\n")
+        avgGuestperHour = int(input("Srednia liczba gosci w restauracji\n"))
+    workTime = int(input("Podaj czas pracy restauracji(min 4h)\n"))
+    while workTime <= 3:
+        print("Niepoprawne dane!\n")
+        workTime = int(input("Podaj czas pracy restauracji\n"))
     rushS = int(workTime * 0.5)
     restaurant = Restaurant(workTime, rushS, rushS + 1)  # rush hour start i end to nie godziny zegarowe
     # tylko godziny działania restauracji np jak zaczynamy o 8 i rushhourstart jest 4 to chodzi o to że się
@@ -289,9 +316,15 @@ def main():
     #
     #
     days = int(input("Podaj ilosc dni\n"))
+    while days <= 0:
+        print("Niepoprawne dane!\n")
+        days = int(input("Podaj ilosc dni\n"))
     avgMark = 0
 
     profil = int(input("Wybierz profil: 0 - FastFood, 1 - Zwyczajna restauracja, 2 - Restauracja droga\n"))
+    while profil <= 0:
+        print("Niepoprawne dane!\n")
+        profil = int(input("Wybierz profil: 0 - FastFood, 1 - Zwyczajna restauracja, 2 - Restauracja droga\n"))
     global expectedPrice
     if profil == 0:
         expectedPrice = 15
@@ -301,7 +334,11 @@ def main():
         expectedPrice = 35
 
     dishmax = int(input("Podaj ilosc dan\n"))
+    while dishmax <= 0:
+        print("Niepoprawne dane!\n")
+        dishmax = int(input("Podaj ilosc dan\n"))
     for d in range(dishmax):
+        print("Niepoprawne dane!\n")
         price = int(input("Podaj cene dania\n"))
         restaurant.dishMap[d+1] = price
 
@@ -311,7 +348,7 @@ def main():
 
 
     for i in range(days):
-        if chefNum <= 0 or waiterNum <= 0 or managerNum <= 0:
+        if avgGuestperHour > 100:
             break
         restaurant.markList.clear()
         restaurant.unservTablesList.clear()

@@ -272,19 +272,19 @@ def main():
         print("Niepoprawne dane!\n")
         table2 = int(input("Podaj liczbe stolow 2-osobowych\n"))
     table4 = int(input("Podaj liczbe stolow 4-osobowych\n"))
-    while table4 <= 0:
+    while table4 < 0:
         print("Niepoprawne dane!\n")
         table4 = int(input("Podaj liczbe stolow 4-osobowych\n"))
     table6 = int(input("Podaj liczbe stolow 6-osobowych\n"))
-    while table6 <= 0:
+    while table6 < 0:
         print("Niepoprawne dane!\n")
         table6 = int(input("Podaj liczbe stolow 6-osobowych\n"))
     table8 = int(input("Podaj liczbe stolow 8-osobowych\n"))
-    while table8 <= 0:
+    while table8 < 0:
         print("Niepoprawne dane!\n")
         table8 = int(input("Podaj liczbe stolow 8-osobowych\n"))
     avgGuestperHour = int(input("Srednia liczba gosci w restauracji\n"))
-    while avgGuestperHour <= 0:
+    while avgGuestperHour <= 0 or avgGuestperHour > 100:
         print("Niepoprawne dane!\n")
         avgGuestperHour = int(input("Srednia liczba gosci w restauracji\n"))
     workTime = int(input("Podaj czas pracy restauracji(min 4h)\n"))
@@ -350,8 +350,6 @@ def main():
 
 
     for i in range(days):
-        if avgGuestperHour > 100:
-            break
         restaurant.markList.clear()
         restaurant.unservTablesList.clear()
         restaurant.filledTablesList.clear()
@@ -359,7 +357,6 @@ def main():
         restaurant.waitlineguestList.clear()
         restaurant.takeawayList.clear()
         restaurant.orderlist.clear()
-
         restaurant.addGuests(avgGuestperHour)
         restaurant.addTables(table2, table4, table6, table8)
 
@@ -370,6 +367,7 @@ def main():
             #chef = chefNum
             # kelnerzy = waiterNum
             # menagers = managerNum
+
             managers.workUpdate()
             waiters.workUpdate()
             cook.workUpdate()
@@ -405,7 +403,6 @@ def main():
                     else:
                         restaurant.waitlineguestList.append(groupofpeople)
                         restaurant.allguestList.remove(groupofpeople)
-                        resigned += 1
             # dostępni menagerzy
             # (na razie zakładam że menagerzy zawsze dostępni czyli czas obsługi =1 minuta)
 
@@ -429,6 +426,7 @@ def main():
                         klientWyn.restaurantMark = 10
                 if groupofpeopleW.resignorNot():  # sprawdzamy czy są dalej cierpliwi
                     restaurant.takeawayList.remove(groupofpeopleW)  # jeśli nie są to wywalamy ich z kolejki
+                    resigned += len(groupofpeopleW.listofPeople)
 
             kolejkanaW = len(restaurant.takeawayList)
             if kolejkanaW > 0:
@@ -476,7 +474,7 @@ def main():
                 restaurant.markRestaurant(groupofpeople)
                 if groupofpeople.resignorNot():  # sprawdzamy czy są dalej cierpliwi
                     restaurant.waitlineguestList.remove(groupofpeople)  # jeśli nie są to wywalamy ich z kolejki
-                    resigned += 1
+                    resigned += len(groupofpeople.listofPeople)
 
 
                     # dostarczanie zamówień
@@ -548,6 +546,8 @@ def main():
             avgMark += client.restaurantMark
             all += 1
         avgMark = avgMark / len(restaurant.markList)
+        if avgMark < 4:
+            break
 
     # później można nadgodziny wziąć
     # chefcost = chefNum * chefSalary * restaurant.workHours() + menagers * managerSalary * restaurant.workHours()

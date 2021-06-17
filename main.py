@@ -338,13 +338,15 @@ def main():
         print("Niepoprawne dane!\n")
         dishmax = int(input("Podaj ilosc dan\n"))
     for d in range(dishmax):
-        print("Niepoprawne dane!\n")
         price = int(input("Podaj cene dania\n"))
         restaurant.dishMap[d+1] = price
 
     criticalPrice = 0
     for p in range(dishmax):
         criticalPrice += restaurant.dishMap[p + 1]
+
+    resigned = 0
+    all = 0
 
 
     for i in range(days):
@@ -403,6 +405,7 @@ def main():
                     else:
                         restaurant.waitlineguestList.append(groupofpeople)
                         restaurant.allguestList.remove(groupofpeople)
+                        resigned += 1
             # dostępni menagerzy
             # (na razie zakładam że menagerzy zawsze dostępni czyli czas obsługi =1 minuta)
 
@@ -473,9 +476,10 @@ def main():
                 restaurant.markRestaurant(groupofpeople)
                 if groupofpeople.resignorNot():  # sprawdzamy czy są dalej cierpliwi
                     restaurant.waitlineguestList.remove(groupofpeople)  # jeśli nie są to wywalamy ich z kolejki
+                    resigned += 1
 
 
-            # dostarczanie zamówień
+                    # dostarczanie zamówień
             zamowienia = len(restaurant.orderlist)
 
             if zamowienia > 0:
@@ -541,7 +545,8 @@ def main():
                 czyotwarte = False
 
         for client in restaurant.markList:
-             avgMark += client.restaurantMark
+            avgMark += client.restaurantMark
+            all += 1
         avgMark = avgMark / len(restaurant.markList)
 
     # później można nadgodziny wziąć
@@ -550,6 +555,7 @@ def main():
     menagercost = managerNum * managerSalary * restaurant.worktime*days
     waitercost = waiterNum * waiterSalary * restaurant.worktime*days
     print(" ")
+    print("Opuscilo lokal: " + str(resigned *100 // all) + "%")
     print("Czas pracy: " + str(restaurant.worktime) + " Godzin")
     # for i in restaurant.markList[:]:
     #     print(str(i.restaurantMark) + " id: " + str(i.clientID))

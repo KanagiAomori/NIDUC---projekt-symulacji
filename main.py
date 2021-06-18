@@ -532,7 +532,6 @@ def main():
         avgMark = avgMark / len(restaurant.markList)
         # jesli ocena uzyskana za dzien pracy jest na poziomie 3 i mniej symulacja zakancza sie(klienci nie przychodza ale pracownika placimy za tyle dni ile symulacja miala trwac)
         if avgMark < 4:
-            resigned = all
             break
 
     # statystyki koncowe

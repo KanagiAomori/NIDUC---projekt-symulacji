@@ -469,7 +469,7 @@ def main():
                 for order in restaurant.orderlist[:]:
                     if waiters.isGroupFree() and order.isReady():  # kelnerzy > 0
                         # kelnerzy -= 1
-                        waiters.groupWork(2)
+                        waiters.groupWork(4)
                         for table in restaurant.filledTablesList[:]:
                             if table.tableID == order.tableID:
                                 for client in table.guestList[:]:
@@ -505,7 +505,7 @@ def main():
                     if waiters.isGroupFree():  # kelnerzy > 0:
                         if table.orderTaken == False:  # jeśli stolik nie złożył zamówienia
                             table.orderTaken = True
-                            waiters.groupWork(2)
+                            waiters.groupWork(4)
                             for client in table.guestList[:]:
                                 danie = randint(1, dishmax)
                                 order = Order(client.clientID, table.tableID, danie, randint(5, 10),

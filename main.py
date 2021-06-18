@@ -321,7 +321,7 @@ def main():
     avgMark = 0  # srednia ocena restauracji
 
     profil = int(input("Wybierz profil: 0 - FastFood, 1 - Zwyczajna restauracja, 2 - Restauracja droga\n"))
-    while profil <= 0:
+    while profil < 0:
         print("Niepoprawne dane!\n")
         profil = int(input("Wybierz profil: 0 - FastFood, 1 - Zwyczajna restauracja, 2 - Restauracja droga\n"))
     global expectedPrice  # wybor profilu restauracji
